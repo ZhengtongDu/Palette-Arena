@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { Home } from './pages/Home';
 import { Compare } from './pages/Compare';
 import { Rate } from './pages/Rate';
+import { Gallery } from './pages/Gallery';
 import { Dashboard } from './pages/Dashboard';
 import { Admin } from './pages/Admin';
 
@@ -12,6 +13,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/compare" element={<Compare />} />
         <Route path="/rate" element={<Rate />} />
+        <Route path="/gallery" element={<Gallery />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/admin" element={<Admin />} />
       </Routes>
