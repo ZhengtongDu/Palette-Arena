@@ -2,6 +2,7 @@
 const APP_ID = import.meta.env.VITE_BMOB_APP_ID || 'f037b713f60fe4935fb4d6b4b67b7bf6';
 const REST_API_KEY = import.meta.env.VITE_BMOB_REST_API_KEY || '11fab69bf7240057ce041acf272a60d3';
 const API_BASE = 'https://api.bmobcloud.com/1';
+const FILE_API_BASE = 'https://api.bmobcloud.com/2/files';
 
 // Check if Bmob credentials are configured
 if (!APP_ID || !REST_API_KEY) {
@@ -38,6 +39,35 @@ async function request<T>(
   }
 
   return response.json();
+}
+
+// File upload to Bmob
+interface BmobFileResponse {
+  filename: string;
+  url: string;
+  cdn: string;
+}
+
+export async function uploadFile(file: File): Promise<string> {
+  const filename = `${Date.now()}_${file.name}`;
+
+  const response = await fetch(`${FILE_API_BASE}/${encodeURIComponent(filename)}`, {
+    method: 'POST',
+    headers: {
+      'X-Bmob-Application-Id': APP_ID,
+      'X-Bmob-REST-API-Key': REST_API_KEY,
+      'Content-Type': file.type,
+    },
+    body: file,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `Upload failed: ${response.status}`);
+  }
+
+  const result: BmobFileResponse = await response.json();
+  return result.url || result.cdn;
 }
 
 // Photo types and operations

@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { uploadToSmms } from '../services/smms';
-import { createPhoto, getPhotos, deletePhoto } from '../services/bmob';
+import { createPhoto, getPhotos, deletePhoto, uploadFile } from '../services/bmob';
 import type { Photo } from '../types';
 
 const ADMIN_PASSWORD = 'palette1337';
@@ -80,7 +79,7 @@ export function Admin() {
     try {
       // Upload file A if selected
       if (fileA) {
-        const uploadedUrlA = await uploadToSmms(fileA);
+        const uploadedUrlA = await uploadFile(fileA);
         await createPhoto({
           url: uploadedUrlA,
           author: 'A',
@@ -91,7 +90,7 @@ export function Admin() {
 
       // Upload file B if selected
       if (fileB) {
-        const uploadedUrlB = await uploadToSmms(fileB);
+        const uploadedUrlB = await uploadFile(fileB);
         await createPhoto({
           url: uploadedUrlB,
           author: 'B',
