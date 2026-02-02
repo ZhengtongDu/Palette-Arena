@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { ImageCard } from '../components/ImageCard';
 import { StarRating } from '../components/StarRating';
 import { VoteButton } from '../components/VoteButton';
-import { getPhotos, createRating, getRatingsByPhotoId } from '../services/leancloud';
+import { getPhotos, createRating, getRatingsByPhotoId } from '../services/bmob';
 import type { Photo, Rating } from '../types';
 
 export function Rate() {

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   BarChart,
@@ -13,11 +13,11 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { getAuthorStats, getPhotos, getVotes, getRatings } from '../services/leancloud';
+import { getAuthorStats, getPhotos, getVotes, getRatings } from '../services/bmob';
 import type { Photo, Vote, Rating } from '../types';
 
 const COLORS = ['#3B82F6', '#EC4899'];
-const DASHBOARD_PASSWORD = 'palette2024';
+const DASHBOARD_PASSWORD = 'palette1337';
 
 export function Dashboard() {
   const [authenticated, setAuthenticated] = useState(false);

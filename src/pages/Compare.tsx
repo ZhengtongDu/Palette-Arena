@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ImageCard } from '../components/ImageCard';
 import { VoteButton } from '../components/VoteButton';
-import { getComparisonPairs, createVote, getVotesByOriginalId } from '../services/leancloud';
+import { getComparisonPairs, createVote, getVotesByOriginalId } from '../services/bmob';
 import type { ComparisonPair, Vote } from '../types';
 
 export function Compare() {
