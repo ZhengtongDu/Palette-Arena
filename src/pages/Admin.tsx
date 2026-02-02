@@ -1,9 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { createPhoto, getPhotos, deletePhoto, uploadFile } from '../services/bmob';
+import { createPhoto, getPhotos, deletePhoto, uploadFile, verifyAdminPassword } from '../services/bmob';
 import type { Photo } from '../types';
-
-const ADMIN_PASSWORD = 'palette1337';
 
 export function Admin() {
   const [authenticated, setAuthenticated] = useState(false);
@@ -11,6 +9,7 @@ export function Admin() {
   const [photos, setPhotos] = useState<Photo[]>([]);
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   // Upload mode: 'file' or 'url'
   const [uploadMode, setUploadMode] = useState<'file' | 'url'>('url');
@@ -27,13 +26,22 @@ export function Admin() {
   const [urlA, setUrlA] = useState('');
   const [urlB, setUrlB] = useState('');
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === ADMIN_PASSWORD) {
-      setAuthenticated(true);
-      loadPhotos();
-    } else {
-      alert('密码错误');
+    setVerifying(true);
+    try {
+      const isValid = await verifyAdminPassword(password);
+      if (isValid) {
+        setAuthenticated(true);
+        loadPhotos();
+      } else {
+        alert('密码错误');
+      }
+    } catch (error) {
+      console.error('Verification failed:', error);
+      alert('验证失败');
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -207,9 +215,10 @@ export function Admin() {
             />
             <button
               type="submit"
-              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors"
+              disabled={verifying}
+              className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
             >
-              进入
+              {verifying ? '验证中...' : '进入'}
             </button>
           </form>
           <div className="mt-4 text-center">

@@ -4,9 +4,27 @@ const REST_API_KEY = import.meta.env.VITE_BMOB_REST_API_KEY || '11fab69bf7240057
 const API_BASE = 'https://api.bmobcloud.com/1';
 const FILE_API_BASE = 'https://api.bmobcloud.com/2/files';
 
+// Admin password hash (SHA-256)
+// To generate: echo -n "your_password" | sha256sum
+const ADMIN_PASSWORD_HASH = import.meta.env.VITE_ADMIN_PASSWORD_HASH || '5e5eb431754e0e542971f4488b1d8d82e993381de5a34920c5d6f08c1e52393d';
+
 // Check if Bmob credentials are configured
 if (!APP_ID || !REST_API_KEY) {
   console.error('Bmob credentials not configured');
+}
+
+// Simple SHA-256 hash function
+async function sha256(message: string): Promise<string> {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Verify admin password
+export async function verifyAdminPassword(password: string): Promise<boolean> {
+  const hash = await sha256(password);
+  return hash === ADMIN_PASSWORD_HASH;
 }
 
 interface BmobObject {

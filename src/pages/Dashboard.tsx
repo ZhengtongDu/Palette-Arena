@@ -13,16 +13,16 @@ import {
   Pie,
   Cell,
 } from 'recharts';
-import { getAuthorStats, getPhotos, getVotes, getRatings } from '../services/bmob';
+import { getAuthorStats, getPhotos, getVotes, getRatings, verifyAdminPassword } from '../services/bmob';
 import type { Photo, Vote, Rating } from '../types';
 
 const COLORS = ['#3B82F6', '#EC4899'];
-const DASHBOARD_PASSWORD = 'palette1337';
 
 export function Dashboard() {
   const [authenticated, setAuthenticated] = useState(false);
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [verifying, setVerifying] = useState(false);
   const [stats, setStats] = useState<{
     A: { totalVotes: number; totalWins: number; winRate: number; avgRating: number; totalRatings: number };
     B: { totalVotes: number; totalWins: number; winRate: number; avgRating: number; totalRatings: number };
@@ -31,13 +31,22 @@ export function Dashboard() {
   const [votes, setVotes] = useState<Vote[]>([]);
   const [ratings, setRatings] = useState<Rating[]>([]);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === DASHBOARD_PASSWORD) {
-      setAuthenticated(true);
-      loadData();
-    } else {
-      alert('密码错误');
+    setVerifying(true);
+    try {
+      const isValid = await verifyAdminPassword(password);
+      if (isValid) {
+        setAuthenticated(true);
+        loadData();
+      } else {
+        alert('密码错误');
+      }
+    } catch (error) {
+      console.error('Verification failed:', error);
+      alert('验证失败');
+    } finally {
+      setVerifying(false);
     }
   };
 
@@ -76,9 +85,10 @@ export function Dashboard() {
             />
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={verifying}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
-              进入
+              {verifying ? '验证中...' : '进入'}
             </button>
           </form>
           <div className="mt-4 text-center">
